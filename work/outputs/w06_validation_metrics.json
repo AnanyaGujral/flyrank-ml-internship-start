@@ -1,0 +1,45 @@
+{
+  "_provenance": "Captured from the committed execution of work/notebooks/w06_validation_audit.ipynb (warehouse release; python 3.12, duckdb 1.5.5, pandas 2.2.3, scikit-learn 1.6.1). Re-run with HF_TOKEN to regenerate.",
+  "task": "ml-09",
+  "decision_month": "2026-03",
+  "label_month": "2026-04",
+  "source": "re-audit of w05_model_metrics.json + w04_baseline_metrics.json",
+  "section1": {
+    "feature_window": ["2026-03-01 00:00:00", "2026-03-31 00:00:00"],
+    "label_window": ["2026-04-01 00:00:00", "2026-04-30 00:00:00"],
+    "adjacent_non_overlapping": true,
+    "whole_pool_base_rate": 0.515,
+    "majority_class_accuracy_decline": 0.515,
+    "majority_class_accuracy_stable": 0.485,
+    "random_split_client_overlap": 39,
+    "grouped_split_client_overlap": 0
+  },
+  "section2": {
+    "before_random_70_30": {
+      "pk": {"10": 0.9, "20": 0.95, "50": 0.92, "100": 0.96},
+      "auc": 0.77,
+      "tr_auc": 0.853,
+      "test_base": 0.515,
+      "client_overlap": 39
+    },
+    "after_grouped_by_client": {
+      "pk": {"10": 0.9, "20": 0.9, "50": 0.86, "100": 0.87},
+      "auc": 0.739,
+      "tr_auc": 0.852,
+      "test_base": 0.429,
+      "client_overlap": 0
+    },
+    "groupkfold5": {"p50_mean": 0.944, "p50_sd": 0.023, "auc_mean": 0.751, "auc_sd": 0.024}
+  },
+  "section3": {
+    "leak_trap": {"honest_p50": 0.86, "honest_auc": 0.739, "leak_p50": 1.0, "leak_auc": 0.995},
+    "client_overlap_grouped": 0
+  },
+  "section4": {
+    "claims_rewritten": [
+      "P@50 0.86 / P@100 0.87 / AUC 0.739 on held-out clients - far above the baseline (0.44).",
+      "momentum_last7 dominates the model's importance.",
+      "The two rankings share no top-50 pages, so both notions of 'worth reviewing' are real."
+    ]
+  }
+}

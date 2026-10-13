@@ -1,0 +1,51 @@
+{
+  "task": "ml-06",
+  "data": "data/raw/content_refresh_anonymized.csv",
+  "rows": 30000,
+  "label": "is_declining_label = (trend_direction == 'down') [same-window proxy]",
+  "base_rate": 0.542,
+  "signal_1_volume": {
+    "verdict": "MIXED (gate, not driver)",
+    "decline_by_tier": {
+      "low (100-1k)": 0.499,
+      "moderate (1k-10k)": 0.62,
+      "high (10k+)": 0.524
+    }
+  },
+  "signal_2_ctr_vs_position": {
+    "verdict": "CONFIRMED (page-one)",
+    "top3_bottom_ctr": 0.881,
+    "top3_top_ctr": 0.45
+  },
+  "signal_3_freshness": {
+    "verdict": "WEAK / non-monotone",
+    "decline_by_band": {
+      "<90d": 0.512,
+      "90-180d": 0.611,
+      "180d+": 0.471
+    }
+  },
+  "flag_lift": [
+    {
+      "flag": "low_ctr_visible_page",
+      "n": 9759,
+      "decline_if_flagged": 0.627,
+      "decline_if_not": 0.501,
+      "lift": 0.126
+    },
+    {
+      "flag": "thin_visible_page",
+      "n": 83,
+      "decline_if_flagged": 0.53,
+      "decline_if_not": 0.542,
+      "lift": -0.012
+    },
+    {
+      "flag": "stale_visible_page",
+      "n": 17,
+      "decline_if_flagged": 0.941,
+      "decline_if_not": 0.542,
+      "lift": 0.399
+    }
+  ]
+}

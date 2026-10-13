@@ -1,0 +1,38 @@
+{
+  "_provenance": "Captured from the committed execution of work/notebooks/w05_model.ipynb (warehouse release; python 3.12, duckdb 1.5.5, pandas 2.2.3, scikit-learn 1.6.1). Re-run with HF_TOKEN to regenerate.",
+  "task": "ml-08",
+  "decision_month": "2026-03",
+  "label_month": "2026-04",
+  "split": "grouped-by-client (30 train / 13 held-out)",
+  "seed": 42,
+  "test_rows": 20002,
+  "test_base_rate": 0.429,
+  "baseline_w04_whole_pool_p50": 0.74,
+  "baseline_w04_whole_pool_base": 0.515,
+  "table": {
+    "baseline rule": {
+      "precision_at_k": {"10": 0.7, "20": 0.7, "50": 0.44, "100": 0.45},
+      "roc_auc": 0.451
+    },
+    "logistic regression": {
+      "precision_at_k": {"10": 0.8, "20": 0.85, "50": 0.7, "100": 0.69},
+      "roc_auc": 0.731
+    },
+    "random forest": {
+      "precision_at_k": {"10": 0.9, "20": 0.9, "50": 0.86, "100": 0.87},
+      "roc_auc": 0.739
+    }
+  },
+  "rf_permutation_importance": {
+    "momentum_last7": 0.1354,
+    "ctr": 0.0120,
+    "pos_march": 0.0072,
+    "active_days_march": 0.0064,
+    "inert_days": 0.0057,
+    "pos_valid": 0.0,
+    "clk_march": -0.0002,
+    "band": -0.0004,
+    "imp_march": -0.0043
+  },
+  "top50_overlap": {"baseline_x_rf": 0, "lr_x_rf": 0}
+}

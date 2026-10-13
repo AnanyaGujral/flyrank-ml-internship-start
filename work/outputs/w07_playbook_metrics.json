@@ -1,0 +1,39 @@
+{
+  "_provenance": "Captured from the committed execution of work/notebooks/w07_action_playbook.ipynb (warehouse release; python 3.12, duckdb 1.5.5, pandas 2.2.3, scikit-learn 1.6.1, matplotlib 3.10.3). Re-run with HF_TOKEN to regenerate.",
+  "task": "ml-10",
+  "decision_month": "2026-03",
+  "label_month": "2026-04",
+  "measured_claims": {
+    "held_out_pk": {"10": 0.9, "20": 0.9, "50": 0.86, "100": 0.87, "200": 0.875, "500": 0.844},
+    "held_out_roc_auc": 0.739,
+    "test_base_rate": 0.429
+  },
+  "decision_support_queue": {
+    "rows": 100893,
+    "action_mix": {"investigate_first": 1009, "watch_prepare": 1514, "monitor": 7567, "no_action": 90803},
+    "archetype_mix": {
+      "watch_rest": 64178,
+      "visible_low_ctr": 18763,
+      "decaying_momentum": 12409,
+      "high_volume_flat": 4704,
+      "stable_strong": 732,
+      "faded_deep": 107
+    },
+    "review_first_share_of_demand": 0.8,
+    "review_first_visible_share": 80.7
+  },
+  "top_reason_codes_review_first": {
+    "ctr_gap+momentum_loss": 714,
+    "momentum_loss": 285,
+    "momentum_loss+volume_exposure": 7,
+    "base_anchor": 1,
+    "volume_exposure": 1,
+    "ctr_gap+volume_exposure": 1
+  },
+  "limits": {
+    "feature_window": "2026-03",
+    "label_window": "2026-04",
+    "validated_on": "13 held-out clients, seed-42 grouped split"
+  },
+  "monitoring": {"base_rate_trigger_band": [0.465, 0.565], "held_out_p50_retrain_floor": 0.75}
+}

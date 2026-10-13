@@ -1,0 +1,26 @@
+{
+  "task": "ml-05",
+  "data": "data/raw/content_refresh_anonymized.csv",
+  "rows": 30000,
+  "feature_matrix_shape": [
+    30000,
+    52
+  ],
+  "target": "is_declining_label = (trend_direction == 'down') [same-window proxy]",
+  "honest_auc": 0.623,
+  "leak_momentum_auc": 0.996,
+  "leak_trend_pct_auc": 1.0,
+  "excluded": [
+    "trend_direction",
+    "trend_pct",
+    "impressions_last_30d",
+    "impressions_prev_30d",
+    "clicks_last_30d",
+    "clicks_prev_30d",
+    "sessions_last_30d",
+    "sessions_prev_30d",
+    "client_id",
+    "content_id"
+  ],
+  "decision": "no feature derived from the label's 30d-vs-30d window is allowed"
+}
