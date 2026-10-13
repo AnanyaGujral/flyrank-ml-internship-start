@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Which pages should an editor review first? A grouped-validation refresh playbook for Search Console data</title>
+<meta name="description" content="A Random Forest trained on March 2026 Search Console facts (100,893 anonymized pages, 43 clients) ranks which already-visible pages a content editor should review first — precision@50 0.86 on held-out clients versus 0.44 for a transparent rule, shipped as a human-reviewed refresh queue.">
+<style>
+  :root{
+    --ink:#15181c; --mut:#545b64; --line:#e2e6ea; --bg:#ffffff; --soft:#f6f8fa;
+    --accent:#1a56db; --accent-soft:#eaf0fb; --warn:#b3261e; --ok:#0b6b3a;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:17px/1.7 Georgia,"Iowan Old Style","Times New Roman",serif;}
+  .wrap{max-width:820px;margin:0 auto;padding:44px 22px 96px}
+  header.kicker{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+  .eyebrow{font:600 12px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+           text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+  h1{font:700 2rem/1.25 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+     letter-spacing:-.01em;margin:.25em 0 .35em}
+  .sub{color:var(--mut);font-size:1.02rem;margin:0}
+  h2{font:700 1.28rem/1.3 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+     margin:2.6em 0 .55em;padding-top:.75em;border-top:1px solid var(--line);scroll-margin-top:14px}
+  h3{font:600 1.02rem/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;margin:1.5em 0 .35em}
+  p{margin:.55em 0}
+  a{color:var(--accent)}
+  ul,ol{margin:.5em 0 .8em;padding-left:1.3em}
+  li{margin:.28em 0}
+  code{font:85%/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--soft);
+       padding:.1em .35em;border-radius:4px;border:1px solid var(--line)}
+  nav.toc{background:var(--soft);border:1px solid var(--line);border-radius:10px;
+          padding:14px 18px;margin:0 0 8px;font:14px/1.7 system-ui,sans-serif}
+  nav.toc b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.1em;
+            color:var(--mut);margin-bottom:4px}
+  nav.toc a{display:inline-block;margin-right:14px;text-decoration:none}
+  nav.toc a:hover{text-decoration:underline}
+  .abstract{background:var(--accent-soft);border:1px solid #d3e0f7;border-radius:10px;padding:18px 20px}
+  .abstract h2{border:0;margin:0 0 .3em;padding:0;font-size:1.05rem}
+  .abstract p{margin:.35em 0}
+  .callout{border-left:4px solid var(--accent);background:var(--soft);padding:12px 16px;border-radius:0 8px 8px 0;margin:1.1em 0}
+  .callout.warn{border-left-color:var(--warn)}
+  .callout.ok{border-left-color:var(--ok)}
+  figure{margin:1.5em 0;text-align:center}
+  figure img{max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+  figcaption{font:13.5px/1.6 system-ui,sans-serif;color:var(--mut);margin-top:.55em;text-align:left}
+  figcaption .take{display:block;margin-top:.35em;color:var(--ink)}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:1.1em 0}
+  .metric{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff}
+  .metric .big{font:700 1.45rem/1.2 system-ui,sans-serif;color:var(--accent)}
+  .metric .lbl{font:12px/1.4 system-ui,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+  table{width:100%;border-collapse:collapse;margin:1em 0;font:14.5px/1.5 system-ui,sans-serif}
+  caption{caption-side:top;text-align:left;font-size:13px;color:var(--mut);margin-bottom:.4em}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:var(--soft)}
+  tbody tr:nth-child(even){background:#fbfcfd}
+  .win{font-weight:700;color:var(--ok)}
+  .badge{display:inline-block;font:600 11.5px/1 system-ui,sans-serif;padding:.35em .55em;border-radius:999px;
+         background:var(--accent-soft);color:var(--accent);border:1px solid #d3e0f7}
+  footer{border-top:1px solid var(--line);margin-top:3em;padding-top:1.2em;
+         font:14px/1.7 system-ui,sans-serif;color:var(--mut)}
+  .hr-note{font-size:13.5px;color:var(--mut)}
+  @media (max-width:560px){ h1{font-size:1.6rem} .wrap{padding:28px 16px 72px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="kicker">
+  <div class="eyebrow">FlyRank ML Internship · Capstone Research · Track: Machine Learning</div>
+  <h1>Which pages should an editor review first?</h1>
+  <p class="sub">A grouped-validation refresh-opportunity playbook for Search Console data —
+  <a href="https://flyrank.ai">built on the FlyRank ML Internship dataset</a>.</p>
+</header>
+
+<nav class="toc" aria-label="Contents">
+  <b>On this page</b>
+  <a href="#abstract">Abstract</a>
+  <a href="#intro">1 · Introduction</a>
+  <a href="#data">2 · Data</a>
+  <a href="#method">3 · Methodology</a>
+  <a href="#results">4 · Results</a>
+  <a href="#limits">5 · Limitations</a>
+  <a href="#playbook">6 · Recommendations</a>
+  <a href="#repro">7 · Reproducibility</a>
+  <a href="#credit">8 · Acknowledgments</a>
+</nav>
+
+<section id="abstract" class="abstract">
+  <h2>Abstract</h2>
+  <p>A content editor can only review a handful of a portfolio's already-visible pages in a week, so
+  something has to decide which pages get looked at first. Using March&nbsp;2026 Search Console facts and
+  an April&nbsp;2026 decline outcome from the FlyRank ML Internship warehouse release — 100,893 anonymized
+  pages across 43 clients — I trained a Random Forest and scored it against a transparent rule baseline
+  on the <em>same</em> held-out clients under a grouped-by-client design. On 13 held-out clients the
+  forest ranked about-to-decline pages at precision@50&nbsp;0.86, precision@100&nbsp;0.87 and ROC-AUC&nbsp;0.739,
+  against 0.44 and 0.451 for the rule at a 0.429 base rate. The strongest driver was recent impression
+  momentum, a deliberate leak probe inflated precision@50 to 1.00 once a future-month feature was added,
+  and a five-fold grouped check held at precision@50&nbsp;0.944&nbsp;±&nbsp;0.023. The result is shipped as a short,
+  human-reviewed refresh queue with reason codes, explicit limits and monitoring triggers — decision
+  support, not a prediction about Google's algorithm.</p>
+</section>
+
+<section id="intro">
+<h2>1 · Introduction / Problem Statement</h2>
+<p>An editor at a content agency does not have a discovery problem; the portfolio already has thousands
+of pages with real impressions. The problem is <strong>allocation</strong>: the review budget is a few hundred
+pages per week while the library holds tens of thousands. Ranking every page by raw impressions or by
+"declining" alone spends that budget on pages that are either already healthy or too small to matter.</p>
+<p>The decision this analysis supports is concrete and recurring: <em>given a fixed weekly review budget,
+which already-visible pages should an editor open first — and why?</em> Getting it wrong in one direction
+wastes scarce human hours on pages nobody needed; getting it wrong in the other lets a page one quietly
+decay while a competitor takes the click.</p>
+<p>This is a <strong>ranking / scoring</strong> problem, not classification. The output is not a yes/no label but a
+priority order that an editor works down from the top, so the metric that matters is precision at the top
+of the queue — not overall accuracy, which is dominated by the tens of thousands of rows the editor will
+never open.</p>
+</section>
+
+<section id="data">
+<h2>2 · Data</h2>
+<p>Two scales of the same public, anonymized internship data are used, and every result in this paper is
+labelled with the scale it comes from.</p>
+<h3>Full release (the headline numbers)</h3>
+<ul>
+  <li><strong>Source:</strong> <code>FlyRank/internship-warehouse</code> on Hugging Face (public-but-gated; a read
+  token is needed to fetch it). Table <code>fact_content_daily_performance</code>, partitioned by month.</li>
+  <li><strong>Unit of analysis:</strong> one row per page, aggregated over a month.</li>
+  <li><strong>Decision window:</strong> March&nbsp;2026 features. <strong>Outcome window:</strong> April&nbsp;2026 — a page is
+  labelled <code>declined_next_30d</code> when its April impressions fall below 80% of March.</li>
+  <li><strong>Scope:</strong> pages with at least 100 March impressions and Search Console reporting — the
+  "already visible" pool. Final pool: <strong>100,893 pages across 43 clients</strong>; whole-pool base rate
+  <strong>0.515</strong>.</li>
+</ul>
+<h3>Bundled slice (offline reproduction)</h3>
+<p><code>data/raw/content_refresh_anonymized.csv</code> — 30,000 anonymized pages, 44 columns, shipped with the
+starter repo. It carries only a <em>same-window proxy</em> label (<code>trend_direction == "down"</code>), so it is
+used to reproduce the <em>method</em> offline, never to claim the headline numbers.</p>
+<div class="callout"><strong>Privacy.</strong> Only hashed page and client ids appear, and the shipped
+artifacts contain aggregates and buckets. No client names, domains, URLs, search queries, credentials or
+raw exports are used or published anywhere in this project.</div>
+<h3>Exclusions (and why)</h3>
+<ul>
+  <li>Pages below the impression threshold — out of scope by design; this playbook reviews pages that are
+  already being seen.</li>
+  <li>GA4 engagement as a <em>population filter</em> — it is sparse, and filtering on it would silently drop
+  pages; it is kept only as a feature with an explicit "unknown" value.</li>
+  <li>Content-release dates as <em>features</em> — the release snapshot is as-of-release and would leak the
+  future into the model. This is audited in §3.</li>
+</ul>
+</section>
+
+<section id="method">
+<h2>3 · Methodology</h2>
+<h3>Features</h3>
+<p>Eighteen numeric signals plus eight categorical page descriptors, all taken from the trailing March
+window: impression/click/session aggregates (log-scaled), CTR, average position, days-with-impressions
+coverage, content age and days-since-update, depth (word/char counts), and engagement rates. Four
+features ultimately carry the model (Figure&nbsp;3); the rest add robustness.</p>
+<h3>Label and baseline</h3>
+<p>The label is the forward outcome <code>declined_next_30d</code> described above. The baseline is a
+transparent, hand-written rule — flag page-one pages whose CTR sits in the bottom half of their position
+band, weighted by impression exposure — so the comparison is against a rule an editor could apply by hand,
+not a straw man.</p>
+<h3>Validation design</h3>
+<p>Portfolios are the natural unit of generalization: a refresh playbook is expected to work on a
+<em>new</em> client. Both the baseline and every model are therefore scored on the <strong>same held-out whole
+clients</strong> (a seed-42 grouped split; 30 clients train, 13 held out, 20,002 held-out pages, base rate
+0.429). A naive random 70/30 split is run alongside it purely to show how much client leakage inflates the
+score, and a five-fold <code>GroupKFold</code> is run to check stability across different held-out client sets.</p>
+<h3>Models and leakage checks</h3>
+<p>Logistic Regression is the readable anchor; a Random Forest (400 trees, <code>min_samples_leaf=15</code>) is the
+strong learner. Every feature is re-checked for <em>when it is knowable</em>: anything derived from the labelling
+window is banned. Two probes make the risk concrete — a leak probe that adds one future-month feature, and
+an offline probe on the bundled slice that adds one label-derived column — both of which are shown in §4
+rather than hidden.</p>
+</section>
+
+<section id="results">
+<h2>4 · Results</h2>
+<p>All numbers below compare the baseline and the models on the <strong>same</strong> held-out clients at the same
+thresholds. Precision@K is always shown next to the base rate; the forest's early rows are correct roughly
+nine times out of ten where chance (and the rule) sit near four.</p>
+
+<div class="metrics">
+  <div class="metric"><div class="big">0.86</div><div class="lbl">Random Forest P@50</div></div>
+  <div class="metric"><div class="big">0.44</div><div class="lbl">Rule baseline P@50</div></div>
+  <div class="metric"><div class="big">0.429</div><div class="lbl">Held-out base rate</div></div>
+  <div class="metric"><div class="big">0.944</div><div class="lbl">GroupKFold(5) P@50</div></div>
+</div>
+
+<table>
+  <caption>Table 1 — Ranking quality on the same 13 held-out clients (seed-42 grouped split).</caption>
+  <thead><tr><th>Method</th><th>P@10</th><th>P@20</th><th>P@50</th><th>P@100</th><th>ROC-AUC</th></tr></thead>
+  <tbody>
+    <tr><td>Rule baseline</td><td>0.70</td><td>0.70</td><td>0.44</td><td>0.45</td><td>0.451</td></tr>
+    <tr><td>Logistic Regression</td><td>0.80</td><td>0.85</td><td>0.70</td><td>0.69</td><td>0.731</td></tr>
+    <tr><td>Random Forest</td><td class="win">0.90</td><td class="win">0.90</td><td class="win">0.86</td><td class="win">0.87</td><td class="win">0.739</td></tr>
+  </tbody>
+</table>
+<p class="hr-note">The rule keeps pace only for the first handful of rows, then collapses toward chance once
+the editor works past them — exactly where a real review session lives.</p>
+
+<figure>
+  <img src="assets/precision_at_k.svg" alt="Line chart of precision at K for the rule baseline, logistic regression and random forest on the same held-out clients, with the base rate as a dashed line.">
+  <figcaption><strong>Figure 1</strong> — Precision@K on the same 13 held-out clients.
+  <span class="take"><strong>Takeaway:</strong> at the review budgets an editor actually has, the forest's
+  early queue is correct about nine times in ten, while the rule sits near chance.</span></figcaption>
+</figure>
+
+<h3>Stability and leakage checks</h3>
+<p>A five-fold <code>GroupKFold</code> over whole clients puts the forest at
+<strong>P@50 = 0.944 ± 0.023</strong> (AUC 0.751 ± 0.024), so the headline is not an artefact of one lucky
+seed. Two probes then bound the result from the other side:</p>
+<ul>
+  <li><strong>The honest-vs-naive gap.</strong> A random 70/30 split jumps to P@50 0.92 with all 39 clients
+  appearing on both sides; the grouped split scores 0.86 with <strong>zero</strong> client overlap. Client
+  leakage is worth roughly six points of false confidence.</li>
+  <li><strong>The leak trap.</strong> Adding a single future-month feature drives P@50 to <strong>1.00</strong> and
+  AUC to <strong>0.995</strong>. That is the score you get from cheating; it is reported here so the headline
+  0.86 can be read as honest.</li>
+</ul>
+
+<figure>
+  <img src="assets/split_comparison.svg" alt="Bar chart comparing random-split and grouped-split random-forest precision at 50, with the base rate as a dashed line.">
+  <figcaption><strong>Figure 2</strong> — The same forest under two splits.
+  <span class="take"><strong>Takeaway:</strong> a naive random split flatters the model by leaking clients;
+  validating on whole held-out clients is what makes the 0.86 trustworthy.</span></figcaption>
+</figure>
+
+<figure>
+  <img src="assets/feature_importance.svg" alt="Horizontal bar chart of permutation importance for the random forest; recent impression momentum dominates.">
+  <figcaption><strong>Figure 3</strong> — Permutation importance on held-out clients.
+  <span class="take"><strong>Takeaway:</strong> recent impression momentum dominates, followed by CTR,
+  March position and coverage — the model leans on movement and under-earning, not on raw size.</span></figcaption>
+</figure>
+
+<div class="callout"><strong>Reproduction at the offline scale.</strong> The bundled 30,000-page slice uses a
+same-window proxy label instead of a genuine outcome. There, a good CTR-for-position rule and the learned
+models roughly tie, and the random-split inflation is even larger (P@50 0.98 with all 31 test clients
+leaking into train versus 0.64 grouped). Wilson-smaller data and a weaker label are exactly the conditions
+under which a transparent rule holds up — which is why the forward-label release, not the proxy slice,
+carries the headline.</div>
+</section>
+
+<section id="limits">
+<h2>5 · Limitations and Honest Framing</h2>
+<ul>
+  <li><strong>Decision support, not prediction or cause.</strong> The queue orders pages for human review. It
+  does not forecast a page's traffic and it does <em>not</em> establish that refreshing a flagged page causes
+  recovery — that requires a controlled experiment, not an observational ranking.</li>
+  <li><strong>Association, not mechanism.</strong> "Momentum dominates" is a measured relationship between
+  trailing impressions and the forward decline label. It is directional evidence, not a claim about
+  Google's ranking algorithm, and it does not prove any ranking signal exists.</li>
+  <li><strong>One month, one market.</strong> A single decision window (March 2026) and 43 clients. GroupKFold
+  stability helps, but cross-month replication is the honest next step before treating the effect sizes as
+  constants.</li>
+  <li><strong>Proxy at the bundled scale.</strong> The offline slice's label is a same-window definition; its
+  numbers reproduce the <em>method</em> and are labelled as a proxy everywhere they appear.</li>
+  <li><strong>Scores are rankings, not calibrated probabilities.</strong> The queue is re-issued each month and
+  must not be reused once the next month closes.</li>
+</ul>
+</section>
+
+<section id="playbook">
+<h2>6 · Ranked Recommendations — the action playbook</h2>
+<p>The model score is converted into four actions by percentile, so the queue is deliberately far smaller
+than the pool. The <strong>review-first tier is 1,009 pages — 1.0% of the pool</strong>, covering 0.8% of March
+demand, and 80.7% of those pages are already on page one: visible, but not earning the click.</p>
+
+<table>
+  <caption>Table 2 — The four actions and their share of the 100,893-page pool.</caption>
+  <thead><tr><th>Action</th><th>Pages</th><th>Share</th><th>What the editor does</th></tr></thead>
+  <tbody>
+    <tr><td>investigate_first</td><td>1,009</td><td>1.0%</td><td>First pass; read the reason code and review by hand</td></tr>
+    <tr><td>watch_prepare</td><td>1,514</td><td>1.5%</td><td>Draft a refresh while the evidence matures</td></tr>
+    <tr><td>monitor</td><td>7,567</td><td>7.5%</td><td>Drift-watch only</td></tr>
+    <tr><td>no_action</td><td>90,803</td><td>90.0%</td><td>Leave it</td></tr>
+  </tbody>
+</table>
+
+<figure>
+  <img src="assets/action_mix.svg" alt="Bar chart of the four actions as a percentage of the page pool.">
+  <figcaption><strong>Figure 4</strong> — The four actions as a share of the pool.
+  <span class="take"><strong>Takeaway:</strong> the playbook is deliberately tiny — a reviewable queue, not a
+  wall of alerts.</span></figcaption>
+</figure>
+
+<h3>Why a page is in the queue: reason codes</h3>
+<p>Every review-first row carries feature-only reason codes, so an editor can check the "why" before
+spending time. In the review-first tier the dominant signal is a page that is both under-earning clicks and
+already decelerating.</p>
+<table>
+  <caption>Table 3 — Review-first reason codes (feature-only flags).</caption>
+  <thead><tr><th>Reason code</th><th>Pages</th></tr></thead>
+  <tbody>
+    <tr><td>ctr_gap + momentum_loss</td><td>714</td></tr>
+    <tr><td>momentum_loss</td><td>285</td></tr>
+    <tr><td>momentum_loss + volume_exposure</td><td>7</td></tr>
+    <tr><td>base_anchor</td><td>1</td></tr>
+    <tr><td>volume_exposure</td><td>1</td></tr>
+    <tr><td>ctr_gap + volume_exposure</td><td>1</td></tr>
+  </tbody>
+</table>
+<p><strong>How to use it.</strong> Work the review-first tier top-down, check the reason code, and act by hand;
+keep the watch tier for drafting. Re-issue the queue monthly and watch two triggers — if the base rate
+drifts outside its expected band, or held-out precision@50 falls below 0.75, retrain before trusting the
+next queue.</p>
+</section>
+
+<section id="repro">
+<h2>7 · Reproducibility</h2>
+<ul>
+  <li><strong>Repository:</strong>
+  <a href="https://github.com/AnanyaGujral/flyrank-ml-internship-start">github.com/AnanyaGujral/flyrank-ml-internship-start</a></li>
+  <li><strong>Executable mirror of this paper:</strong> <code>work/notebooks/capstone.ipynb</code> — runs top to
+  bottom <em>offline</em>, reproduces the method on the bundled slice, and regenerates every figure and table
+  in <code>output/</code>.</li>
+  <li><strong>Full-release study and receipts:</strong> <code>work/notebooks/w03_data_contract.ipynb</code> …
+  <code>w07_action_playbook.ipynb</code>, with committed receipts in <code>work/outputs/*.json</code>. Re-running
+  them requires an <code>HF_TOKEN</code> with read access to <code>FlyRank/internship-warehouse</code>.</li>
+  <li><strong>Artifacts:</strong> <code>output/</code> (charts, evaluation tables, ranked recommendations) and
+  <code>portfolio/</code> (this paper).</li>
+  <li><strong>Offline quick-start:</strong> <code>python scripts/run_all.py</code> runs the starter pipeline on the
+  bundled slice end to end.</li>
+</ul>
+<div class="callout warn"><strong>Access note.</strong> The warehouse release is gated. Anyone with a read
+token can reproduce the headline; without one, the capstone notebook still runs and the shipped receipts
+still document every headline number.</div>
+</section>
+
+<section id="credit">
+<h2>8 · Acknowledgments and Data Credit</h2>
+<p>Data credit: <a href="https://flyrank.ai">Built on the FlyRank ML Internship dataset</a>. Thanks to the
+FlyRank team for assembling and sharing the anonymized Search Console and engagement data that made the
+study possible.</p>
+<p class="hr-note">Framing: all results are observational associations measured on anonymized data. Nothing
+here proves Google's ranking algorithm, guarantees ranking improvements, or establishes a causal refresh
+effect. Figures and tables in this paper are generated by
+<code>work/notebooks/capstone.ipynb</code>.</p>
+</section>
+
+<footer>
+  <span class="badge">Lane 2 · Refresh / Content Opportunity Scoring</span>
+  <p>Capstone research paper · Machine Learning track · Google Search Ranking &amp; Discoverability.
+  Source and reproduction instructions:
+  <a href="https://github.com/AnanyaGujral/flyrank-ml-internship-start">github.com/AnanyaGujral/flyrank-ml-internship-start</a>.</p>
+</footer>
+
+</div>
+</body>
+</html>
