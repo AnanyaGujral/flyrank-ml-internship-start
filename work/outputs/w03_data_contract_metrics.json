@@ -1,0 +1,24 @@
+{
+  "task": "ml-04",
+  "data": "data/raw/content_refresh_anonymized.csv",
+  "rows": 30000,
+  "columns": 44,
+  "clients": 32,
+  "duplicate_content_ids": 0,
+  "decision_window": "prior-30 (days 31-60)",
+  "outcome_window": "later-30 (days 1-30)",
+  "pool_rule": "impressions_prev_30d >= 100",
+  "pool_rows": 18010,
+  "pool_clients": 30,
+  "label": "declined_next_30d = impressions_last_30d < 0.8 * impressions_prev_30d",
+  "feature_columns": 43,
+  "excluded_overlapping_columns": [
+    "trend_direction, trend_pct",
+    "impressions_last_30d / clicks_last_30d / sessions_last_30d",
+    "impressions_90d, clicks_90d, sessions_90d, ... (all 90d totals)",
+    "ctr, avg_position, engagement_rate, scroll_rate, ai_traffic_pct",
+    "days_with_impressions, days_with_sessions",
+    "impression_tier, position_tier",
+    "provider_used, model_used"
+  ]
+}

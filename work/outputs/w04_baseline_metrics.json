@@ -1,10 +1,28 @@
 {
-  "_provenance": "Captured from the committed execution of work/notebooks/w04_baseline_score.ipynb (warehouse release FlyRank/internship-warehouse; python 3.12, duckdb 1.5.5, pandas 2.2.3, scikit-learn 1.6.1). Re-run the notebook with HF_TOKEN to regenerate.",
   "task": "ml-07",
-  "decision_month": "2026-03",
-  "label_month": "2026-04",
-  "queue_rows": 100893,
-  "base_rate": 0.515,
-  "precision_at_k": {"10": 0.7, "20": 0.7, "50": 0.74, "100": 0.69},
-  "action_counts": {"refresh": 48903, "monitor": 39047, "refresh_and_review_ctr": 12943}
+  "data": "data/raw/content_refresh_anonymized.csv",
+  "pool_rows": 18010,
+  "base_rate": 0.616,
+  "rule": "score = (ctr_prev <= 0.5 * pool_median_ctr) * log1p(impressions_prev_30d)",
+  "median_ctr": 0.1137,
+  "precision_at_k_whole_pool": {
+    "10": 0.6,
+    "20": 0.75,
+    "50": 0.8,
+    "100": 0.78
+  },
+  "precision_at_k_heldout_clients": {
+    "10": 0.7,
+    "20": 0.7,
+    "50": 0.76,
+    "100": 0.67
+  },
+  "heldout_base_rate": 0.567,
+  "heldout_roc_auc": 0.58,
+  "reason_codes": [
+    "ctr_gap",
+    "no_clicks",
+    "high_exposure",
+    "base_anchor"
+  ]
 }

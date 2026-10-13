@@ -34,25 +34,29 @@ The fastest path is Google Colab (one click, zero install). Open Notebook 1 and 
 
 ## Capstone — Refresh / Content Opportunity Scoring (Lane 2)
 
-📄 **Research paper:** [`portfolio/index.html`](portfolio/index.html) — _Which pages should an editor
-review first? A grouped-validation refresh-opportunity playbook for Search Console data._
+📄 **Research paper:** [`portfolio/index.html`](portfolio/index.html) — _Review-first ranking of at-risk
+pages: a leak-aware, client-grouped study where a transparent rule matches learned models._
 
 **Research question.** Among a client portfolio's already-visible pages, can trailing search and
 engagement signals rank the pages that are about to decline well enough to beat a transparent rule —
 measured at the top of the queue, under a client-grouped (new-client) validation design?
 
-**Headline (full release, 100,893 anonymized pages × 43 clients).** On 13 held-out clients the Random
-Forest reached **precision@50 0.86** (P@100 0.87, ROC-AUC 0.739) versus **0.44** (0.451) for a
-transparent rule and a **0.429** base rate; a five-fold grouped check held at P@50 0.944 ± 0.023. A
-leak probe (adding one future-month feature) inflated P@50 to 1.00 — reported on purpose, so the honest
-0.86 can be read as honest. The result ships as a short, human-reviewed refresh queue with reason codes,
-explicit limits, and monitoring triggers — **decision support, not a prediction about Google's
+**Headline (offline, 30,000 anonymized pages × 32 clients).** On this snapshot the honest answer is
+**no**: the transparent rule reached **precision@50 0.76** on 9 held-out clients (base rate 0.567) and
+logistic regression tied it at 0.76, while the random forest (0.64) and gradient boosting (0.58) did
+worse; a rule+model blend edged to 0.78 but sits inside the five-fold spread (forest
+0.788 ± 0.148 vs rule 0.748 ± 0.126). Global discrimination is weak (ROC-AUC 0.58–0.61), so the paper
+reports a **top-of-queue ordering, not a probability**. Two invalid designs show how easily the number
+inflates: a random page split that leaked 27 of 28 test clients lifted the forest to P@50 0.96, and a
+single label-window feature pushed ROC-AUC to 1.00 — reported on purpose. The deliverable is a short,
+human-reviewed four-tier queue (1,801 pages to investigate first) with feature-only reason codes,
+explicit limits and monitoring triggers — **decision support, not a prediction about Google's
 algorithm.**
 
 | Where the evidence lives | What it is |
 |---|---|
 | [`work/notebooks/capstone.ipynb`](work/notebooks/capstone.ipynb) | Executable mirror of the paper — runs **offline**, reproduces the method, regenerates every figure/table in `output/` |
-| [`work/notebooks/w03…w07`](work/notebooks/) | The full-release study (March 2026 → April 2026 decline label); receipts in `work/outputs/*.json` |
+| [`work/notebooks/w01…w07`](work/notebooks/) | The full study (prior-30 → later-30 decline label) on the bundled slice; receipts in `work/outputs/*.json` |
 | [`output/`](output/) | Generated charts, evaluation tables, data-quality summary, ranked recommendations |
 | [`portfolio/`](portfolio/) | The published research paper + its chart assets |
 | [`submission/paper_url.txt`](submission/paper_url.txt) | The deployed paper URL |
@@ -63,12 +67,11 @@ algorithm.**
 ```bash
 pip install -r requirements.txt
 python scripts/run_all.py                 # offline: starter pipeline on the bundled 30k slice
-jupyter nbconvert --to notebook --execute --inplace work/notebooks/capstone.ipynb   # regenerates output/
+# then run work/notebooks/capstone.ipynb top to bottom to regenerate output/
 ```
 
-Re-running the **full-release** notebooks (`w03`–`w07`) additionally needs an `HF_TOKEN` with read
-access to the gated `FlyRank/internship-warehouse` dataset; the capstone notebook and the committed
-receipts do not.
+The whole study — `w01` through `capstone` — runs **offline** on the bundled slice; no warehouse token
+or gated-dataset access is required. It reads only `data/raw/content_refresh_anonymized.csv`.
 
 ---
 

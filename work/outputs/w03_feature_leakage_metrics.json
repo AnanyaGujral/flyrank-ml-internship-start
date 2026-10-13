@@ -2,25 +2,15 @@
   "task": "ml-05",
   "data": "data/raw/content_refresh_anonymized.csv",
   "rows": 30000,
+  "pool_rows": 18010,
   "feature_matrix_shape": [
-    30000,
-    52
+    18010,
+    43
   ],
-  "target": "is_declining_label = (trend_direction == 'down') [same-window proxy]",
-  "honest_auc": 0.623,
-  "leak_momentum_auc": 0.996,
+  "label": "declined_next_30d (later-30 impressions < 80% of prior-30)",
+  "honest_auc": 0.579,
+  "leak_momentum_auc": 1.0,
   "leak_trend_pct_auc": 1.0,
-  "excluded": [
-    "trend_direction",
-    "trend_pct",
-    "impressions_last_30d",
-    "impressions_prev_30d",
-    "clicks_last_30d",
-    "clicks_prev_30d",
-    "sessions_last_30d",
-    "sessions_prev_30d",
-    "client_id",
-    "content_id"
-  ],
-  "decision": "no feature derived from the label's 30d-vs-30d window is allowed"
+  "leak_outcome_window_auc": 0.848,
+  "decision": "no feature may be derived from the outcome window or from 90-day totals"
 }

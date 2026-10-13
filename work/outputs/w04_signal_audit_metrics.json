@@ -1,51 +1,62 @@
 {
   "task": "ml-06",
   "data": "data/raw/content_refresh_anonymized.csv",
-  "rows": 30000,
-  "label": "is_declining_label = (trend_direction == 'down') [same-window proxy]",
-  "base_rate": 0.542,
+  "pool_rows": 18010,
+  "label": "declined_next_30d (prior-30 in, later-30 out)",
+  "base_rate": 0.616,
   "signal_1_volume": {
     "verdict": "MIXED (gate, not driver)",
-    "decline_by_tier": {
-      "low (100-1k)": 0.499,
-      "moderate (1k-10k)": 0.62,
-      "high (10k+)": 0.524
+    "decline_by_bucket": {
+      "low": 0.623,
+      "mid": 0.652,
+      "high": 0.573
     }
   },
-  "signal_2_ctr_vs_position": {
-    "verdict": "CONFIRMED (page-one)",
-    "top3_bottom_ctr": 0.881,
-    "top3_top_ctr": 0.45
+  "signal_2_ctr": {
+    "verdict": "CONFIRMED",
+    "decline_by_band": {
+      "bottom": 0.722,
+      "mid": 0.603,
+      "top": 0.499
+    }
   },
   "signal_3_freshness": {
     "verdict": "WEAK / non-monotone",
     "decline_by_band": {
-      "<90d": 0.512,
-      "90-180d": 0.611,
-      "180d+": 0.471
+      "<30d": 0.608,
+      "30-90d": 0.588,
+      "90-180d": 0.628,
+      "180d+": 0.952
     }
   },
   "flag_lift": [
     {
-      "flag": "low_ctr_visible_page",
-      "n": 9759,
-      "decline_if_flagged": 0.627,
-      "decline_if_not": 0.501,
-      "lift": 0.126
+      "flag": "low_ctr_visible",
+      "n": 2772,
+      "decline_if_flagged": 0.737,
+      "decline_if_not": 0.594,
+      "lift": 0.144
     },
     {
-      "flag": "thin_visible_page",
-      "n": 83,
-      "decline_if_flagged": 0.53,
-      "decline_if_not": 0.542,
-      "lift": -0.012
+      "flag": "no_clicks_visible",
+      "n": 2043,
+      "decline_if_flagged": 0.736,
+      "decline_if_not": 0.6,
+      "lift": 0.136
     },
     {
-      "flag": "stale_visible_page",
-      "n": 17,
-      "decline_if_flagged": 0.941,
-      "decline_if_not": 0.542,
-      "lift": 0.399
+      "flag": "thin_visible",
+      "n": 25,
+      "decline_if_flagged": 0.68,
+      "decline_if_not": 0.616,
+      "lift": 0.064
+    },
+    {
+      "flag": "stale_visible",
+      "n": 11,
+      "decline_if_flagged": 1.0,
+      "decline_if_not": 0.616,
+      "lift": 0.384
     }
   ]
 }

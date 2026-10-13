@@ -1,91 +1,95 @@
 {
-  "task": "ml-11-capstone",
-  "lane": "Refresh / Content Opportunity Scoring",
-  "research_question": "Can trailing search/engagement signals rank about-to-decline visible pages better than a transparent rule, measured at the top of the queue under a client-grouped design?",
-  "full_release": {
-    "pool_pages": 100893,
-    "test_base_rate": 0.429,
-    "model_vs_baseline": {
-      "baseline rule": {
-        "precision_at_k": {
-          "10": 0.7,
-          "20": 0.7,
-          "50": 0.44,
-          "100": 0.45
-        },
-        "roc_auc": 0.451
+  "study": "offline-bundled-slice",
+  "data": {
+    "rows": 30000,
+    "clients": 32,
+    "pool_rows": 18010,
+    "pool_clients": 30
+  },
+  "label": "declined_next_30d = impressions_last_30d < 0.8 * impressions_prev_30d",
+  "windows": {
+    "features": "prior-30 (days 31-60)",
+    "outcome": "later-30 (days 1-30)"
+  },
+  "heldout": {
+    "transparent rule": {
+      "precision_at_k": {
+        "10": 0.7,
+        "20": 0.7,
+        "50": 0.76,
+        "100": 0.67
       },
-      "logistic regression": {
-        "precision_at_k": {
-          "10": 0.8,
-          "20": 0.85,
-          "50": 0.7,
-          "100": 0.69
-        },
-        "roc_auc": 0.731
+      "roc_auc": 0.58
+    },
+    "logistic regression": {
+      "precision_at_k": {
+        "10": 0.7,
+        "20": 0.75,
+        "50": 0.76,
+        "100": 0.74
       },
-      "random forest": {
-        "precision_at_k": {
-          "10": 0.9,
-          "20": 0.9,
-          "50": 0.86,
-          "100": 0.87
-        },
-        "roc_auc": 0.739
-      }
+      "roc_auc": 0.585
     },
-    "groupkfold5": {
-      "p50_mean": 0.944,
-      "p50_sd": 0.023,
-      "auc_mean": 0.751,
-      "auc_sd": 0.024
+    "random forest": {
+      "precision_at_k": {
+        "10": 0.5,
+        "20": 0.5,
+        "50": 0.64,
+        "100": 0.6
+      },
+      "roc_auc": 0.582
     },
-    "leak_trap": {
-      "honest_p50": 0.86,
-      "honest_auc": 0.739,
-      "leak_p50": 1.0,
-      "leak_auc": 0.995
+    "hist gradient boosting": {
+      "precision_at_k": {
+        "10": 0.4,
+        "20": 0.55,
+        "50": 0.58,
+        "100": 0.59
+      },
+      "roc_auc": 0.582
     },
-    "action_mix": {
-      "investigate_first": 1009,
-      "watch_prepare": 1514,
-      "monitor": 7567,
-      "no_action": 90803
+    "rule + best model blend": {
+      "precision_at_k": {
+        "10": 0.7,
+        "20": 0.75,
+        "50": 0.78,
+        "100": 0.75
+      },
+      "roc_auc": 0.61
     }
   },
-  "bundled_slice": {
-    "rows": 30000,
-    "base_rate": 0.542,
-    "table": {
-      "baseline rule": {
-        "precision_at_k": {
-          "10": 0.7,
-          "20": 0.7,
-          "50": 0.7,
-          "100": 0.7
-        },
-        "roc_auc": 0.52
-      },
-      "logistic regression": {
-        "precision_at_k": {
-          "10": 0.7,
-          "20": 0.7,
-          "50": 0.74,
-          "100": 0.71
-        },
-        "roc_auc": 0.62
-      },
-      "random forest": {
-        "precision_at_k": {
-          "10": 0.5,
-          "20": 0.65,
-          "50": 0.64,
-          "100": 0.71
-        },
-        "roc_auc": 0.624
-      }
+  "heldout_base_rate": 0.567,
+  "groupkfold5": {
+    "random_forest": {
+      "p50_mean": 0.788,
+      "p50_sd": 0.148
     },
-    "random_split_p50": 0.98,
-    "random_split_clients_leaked": 31
+    "rule": {
+      "p50_mean": 0.748,
+      "p50_sd": 0.126
+    }
+  },
+  "invalid_designs": {
+    "random_split": {
+      "p50": 0.96,
+      "auc": 0.72,
+      "clients_leaked": 27
+    },
+    "leak_trap": {
+      "p50": 1.0,
+      "auc": 0.864
+    }
+  },
+  "action_mix": {
+    "investigate_first": 1801,
+    "watch_prepare": 2709,
+    "monitor": 3127,
+    "no_action": 10373
+  },
+  "top_reason_codes": {
+    "ctr_gap+no_clicks": 881,
+    "ctr_gap+high_exposure": 577,
+    "ctr_gap+no_clicks+high_exposure": 191,
+    "ctr_gap": 152
   }
 }

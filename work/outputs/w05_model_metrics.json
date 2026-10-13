@@ -1,38 +1,74 @@
 {
-  "_provenance": "Captured from the committed execution of work/notebooks/w05_model.ipynb (warehouse release; python 3.12, duckdb 1.5.5, pandas 2.2.3, scikit-learn 1.6.1). Re-run with HF_TOKEN to regenerate.",
   "task": "ml-08",
-  "decision_month": "2026-03",
-  "label_month": "2026-04",
-  "split": "grouped-by-client (30 train / 13 held-out)",
+  "data": "data/raw/content_refresh_anonymized.csv",
+  "decision_window": "prior-30 (days 31-60)",
+  "outcome_window": "later-30 (days 1-30)",
+  "split": "grouped-by-client (seed 42, 30% of clients held out)",
   "seed": 42,
-  "test_rows": 20002,
-  "test_base_rate": 0.429,
-  "baseline_w04_whole_pool_p50": 0.74,
-  "baseline_w04_whole_pool_base": 0.515,
+  "test_rows": 3571,
+  "test_clients": 9,
+  "test_base_rate": 0.567,
   "table": {
-    "baseline rule": {
-      "precision_at_k": {"10": 0.7, "20": 0.7, "50": 0.44, "100": 0.45},
-      "roc_auc": 0.451
+    "transparent rule": {
+      "precision_at_k": {
+        "10": 0.7,
+        "20": 0.7,
+        "50": 0.76,
+        "100": 0.67
+      },
+      "roc_auc": 0.58
     },
     "logistic regression": {
-      "precision_at_k": {"10": 0.8, "20": 0.85, "50": 0.7, "100": 0.69},
-      "roc_auc": 0.731
+      "precision_at_k": {
+        "10": 0.7,
+        "20": 0.75,
+        "50": 0.76,
+        "100": 0.74
+      },
+      "roc_auc": 0.585
     },
     "random forest": {
-      "precision_at_k": {"10": 0.9, "20": 0.9, "50": 0.86, "100": 0.87},
-      "roc_auc": 0.739
+      "precision_at_k": {
+        "10": 0.5,
+        "20": 0.5,
+        "50": 0.64,
+        "100": 0.6
+      },
+      "roc_auc": 0.582
+    },
+    "hist gradient boosting": {
+      "precision_at_k": {
+        "10": 0.4,
+        "20": 0.55,
+        "50": 0.58,
+        "100": 0.59
+      },
+      "roc_auc": 0.582
+    },
+    "rule + best model blend": {
+      "precision_at_k": {
+        "10": 0.7,
+        "20": 0.75,
+        "50": 0.78,
+        "100": 0.75
+      },
+      "roc_auc": 0.61
     }
   },
   "rf_permutation_importance": {
-    "momentum_last7": 0.1354,
-    "ctr": 0.0120,
-    "pos_march": 0.0072,
-    "active_days_march": 0.0064,
-    "inert_days": 0.0057,
-    "pos_valid": 0.0,
-    "clk_march": -0.0002,
-    "band": -0.0004,
-    "imp_march": -0.0043
+    "content_age_days": 0.0233,
+    "ctr_prev_z": 0.0204,
+    "ctr_prev": 0.0077,
+    "age_tier_365+": 0.0063,
+    "log_sess_prev": 0.006,
+    "log_clk_prev": 0.0045,
+    "search_volume": 0.0034,
+    "main_intent_transactional": 0.0003,
+    "cpc": 0.0002,
+    "main_intent_commercial": 0.0001
   },
-  "top50_overlap": {"baseline_x_rf": 0, "lr_x_rf": 0}
+  "top50_overlap": {
+    "rule_vs_rf": 1,
+    "lr_vs_rf": 1
+  }
 }
