@@ -62,8 +62,18 @@ our paper lives in `portfolio/` (as required) and all results are ours.
 - [x] Update root `README.md` + reproduction instructions
 - [x] Privacy / publication review (see §6)
 - [x] Add GitHub Pages deployment config (`.github/workflows/deploy-pages.yml`)
-- [ ] Push to `origin/main` — **BLOCKED: no credentials** (see §7)
-- [ ] Deploy + verify live URL → write `submission/paper_url.txt` — **BLOCKED (see §7)**
+- [x] Push to `origin/main` (3 commits) — done by the account owner
+- [x] Deploy + verify live URL → `submission/paper_url.txt` written
+
+## 5b. Deployment (verified)
+
+- **Live paper:** https://ananyagujral.github.io/flyrank-ml-internship-start/ — HTTP 200.
+- Served from the `portfolio/` folder via `.github/workflows/deploy-pages.yml`
+  (Pages source = GitHub Actions).
+- Verified live: title, abstract, all 9 section anchors, the exact
+  "Built on the FlyRank ML Internship dataset" credit linking to https://flyrank.ai, the repo link,
+  and all four chart assets (`assets/*.svg`) return HTTP 200.
+- `submission/paper_url.txt` contains exactly that one URL (59 bytes, no trailing newline).
 
 ## 5. Validation performed
 
@@ -104,12 +114,10 @@ Observed / measured / directional / decision-support only. No causal refresh cla
 Google's algorithm, no client/page/query identifiers. The bundled slice's `trend_direction` label is a
 same-window proxy and is labelled as such everywhere it appears.
 
-## 8. Remaining blockers (need the account owner)
+## 8. Remaining items
 
-1. **Push + GitHub Pages** — this environment has no cached GitHub credential and no token, so
-   `git push` cannot authenticate and Pages cannot be enabled from here. Required manual step:
-   *Settings → Pages → Build and deployment → Source = **GitHub Actions*** (then merge/push the
-   `deploy-pages` workflow, which publishes `portfolio/`). Until the live page is verified,
-   `submission/paper_url.txt` stays a placeholder rather than a guessed URL.
-2. **Warehouse re-run (optional)** — set `HF_TOKEN` to re-execute `w03`–`w07` + the warehouse half of
-   `capstone.ipynb` against `FlyRank/internship-warehouse`.
+1. **Warehouse re-run (optional)** — set `HF_TOKEN` to re-execute `w03`–`w07` + the warehouse half of
+   `capstone.ipynb` against `FlyRank/internship-warehouse`. Everything else is complete; the committed
+   receipts already back every headline number.
+
+_Deployment is done and verified (see §5b). No blockers remain for the capstone submission._
