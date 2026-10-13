@@ -34,7 +34,12 @@ reused; **none of its files, numbers, charts or conclusions were**.
 | `work/notebooks/w05_model.ipynb` (ML-08) | ✅ **rebuilt + executed offline** |
 | `work/notebooks/w06_validation_audit.ipynb` (ML-09) | ✅ **rebuilt + executed offline** |
 | `work/notebooks/w07_action_playbook.ipynb` (ML-10) | ✅ **rebuilt + executed offline** |
-| `work/notebooks/capstone.ipynb` (ML-11/12) | ✅ **rebuilt + executed offline** |
+| `work/notebooks/capstone.ipynb` (ML-11) | ✅ **rebuilt + executed offline** |
+| `work/notebooks/capstone.ipynb` closing cells (ML-12) | ✅ **added** — 5-min demo outline + social-post cut + employer-facing summary + SEO framing |
+| `work/capstone_report.md` (capstone write-up) | ✅ **created** — template sections 0–9 filled on the honest offline numbers |
+| `work/prompt_ladder.md` | ✅ **created** — V0→V5 prompt ladder (ML track), own runs |
+| `work/portfolio/week01_sitemap_toolkit.md` | ✅ **created** — "Draw the Path" sitemap + toolkit (AI-fluency card) |
+| `work/figures/` | ✅ 4 paper charts copied in |
 | `work/outputs/*.json` (receipts) | ✅ **regenerated offline** from the rebuilt notebooks |
 | `outputs/` (starter reference) | unchanged (reverted after a validation run) |
 | `output/` | ✅ regenerated from the new receipts (4 charts, 3 summaries, `capstone_results.json`, `README.md`) |
@@ -64,6 +69,11 @@ reused; **none of its files, numbers, charts or conclusions were**.
 - [x] Rebuilt all 10 notebooks on the offline slice (w01–w07 + capstone)
 - [x] Executed all 10 notebooks top to bottom — 0 error cells, outputs saved
 - [x] Regenerated the 7 receipts in `work/outputs/*.json`
+- [x] Wrote `work/capstone_report.md` (sections 0–9, the 8 graded axes)
+- [x] Added the ML-12 closing section to `capstone.ipynb`
+- [x] Wrote `work/prompt_ladder.md` (V0→V5, own runs)
+- [x] Wrote `work/portfolio/week01_sitemap_toolkit.md` ("Draw the Path")
+- [x] Copied the paper charts into `work/figures/`
 - [x] Regenerated `/output` artifacts from the receipts
 - [x] Rebuilt `/portfolio` research paper (9 sections, 5-sentence abstract, flyrank.ai credit)
 - [x] Updated root `README.md` + reproduction instructions
